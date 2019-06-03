@@ -28,8 +28,11 @@ write_InputTemplate()
 
 \dontrun{
 ##Example with file output
-##To run: uncomment and modify path
-#write_InputTemplate(file = "[YOUR PATH]")
+
+## set temporary filename
+## (replace by own path if needed)
+temp_file <- tempfile(pattern = "template", fileext = ".csv")
+write_InputTemplate(file = temp_file)
 
 }
 
@@ -39,4 +42,9 @@ write_InputTemplate()
 }
 \author{
 Sebastian Kreutzer, IRAMAT-CRP2A, UMR 5060, CNRS - Université Bordeaux Montaigne (France)
+} 
+
+\section{How to cite}{
+Kreutzer, S., 2019. write_InputTemplate(): Write table input template. Function version 0.1.0. In: Kreutzer, S., Nathan, R.P., Mauz, B., 2019. RCarb: Dose Rate Modelling of Carbonate-Rich Samples R package version 0.1.3. https://r-lum.github.io/RCarb/
 }
+

@@ -4,14 +4,18 @@
 \alias{model_DoseRate}
 \title{Model dose rate evolution in carbonate-rich samples}
 \usage{
-model_DoseRate(data, length_step = 1L, max_time = 500L, n.MC = 100,
-  method_control = list(), txtProgressBar = TRUE, verbose = TRUE,
-  plot = TRUE, ...)
+model_DoseRate(data, DR_conv_factors = NULL, length_step = 1L,
+  max_time = 500L, n.MC = 100, method_control = list(),
+  txtProgressBar = TRUE, verbose = TRUE, plot = TRUE, ...)
 }
 \arguments{
 \item{data}{\link{data.frame} (\strong{required}): input data following the structure given
 in the example data set \code{data(Example_Data)}. The input \link{data.frame} should have at least
 one row (i.e. values for one sample). For multiple rows the function is automatically re-called.}
+
+\item{DR_conv_factors}{\link{character} (\emph{optional}): applied dose rate conversion factors,
+allowed input values are \code{"Carb2007"}, \code{"Adamiec_Aitken_1998"}, \code{"Guerin_et_al_2011"},
+\code{"Liritzis_et_al_2013"}. \code{NULL} triggers the default, which is \code{"Carb2007"}}
 
 \item{length_step}{\link{numeric} (with default): step length used for the calculation}
 
@@ -70,7 +74,7 @@ small values (close to 0) this can, however, lead to edge effects (similar in 'C
 values below 0 are set to 0.
 }
 \section{Function version}{
- 0.1.0
+ 0.2.0
 }
 
 \examples{
@@ -86,18 +90,26 @@ txtProgressBar = FALSE
 )
 
 
+} 
+
+\section{How to cite}{
+Kreutzer, S., 2019. model_DoseRate(): Model dose rate evolution in carbonate-rich samples. Function version 0.2.0. In: Kreutzer, S., Nathan, R.P., Mauz, B., 2019. RCarb: Dose Rate Modelling of Carbonate-Rich Samples R package version 0.1.3. https://r-lum.github.io/RCarb/
 }
+
 \references{
 Mauz, B., Hoffmann, D., 2014. What to do when carbonate replaced water: Carb, the model for estimating the
-dose rate of carbonate-rich samples. Ancient TL 32, 24–32. \url{http://ancienttl.org/ATL_32-2_2014/ATL_32-2_Mauz_p24-32.pdf}
+dose rate of carbonate-rich samples. Ancient TL 32, 24-32. \url{http://ancienttl.org/ATL_32-2_2014/ATL_32-2_Mauz_p24-32.pdf}
 
 Nathan, R.P., Mauz, B., 2008. On the dose-rate estimate of carbonate-rich sediments for trapped charge dating.
-Radiation Measurements 43, 14–25. \doi{10.1016/j.radmeas.2007.12.012} \cr
+Radiation Measurements 43, 14-25. \doi{10.1016/j.radmeas.2007.12.012} \cr
 
 \strong{Further reading}
 
 Nathan, R.P., 2010. Numerical modelling of environmental dose rate and its application to trapped-charge dating.
-DPhil thesis, St Hugh’s College, Oxford. \url{https://ora.ox.ac.uk/objects/ora:6421}
+DPhil thesis, St Hugh's College, Oxford. \url{https://ora.ox.ac.uk/objects/ora:6421}
+
+Zimmerman, D.W., 1971. Thermoluminescent dating using fine grains from pottery.
+Archaeometry 13, 29–52.\doi{10.1111/j.1475-4754.1971.tb00028.x}
 }
 \author{
 Sebastian Kreutzer, IRAMAT-CRP2A, UMR 5060, Université Bordeaux Montagine (France); based

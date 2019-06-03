@@ -19,6 +19,10 @@
 #' in the example data set `data(Example_Data)`. The input [data.frame] should have at least
 #' one row (i.e. values for one sample). For multiple rows the function is automatically re-called.
 #'
+#' @param DR_conv_factors [character] (*optional*): applied dose rate conversion factors,
+#' allowed input values are `"Carb2007"`, `"Adamiec_Aitken_1998"`, `"Guerin_et_al_2011"`,
+#' `"Liritzis_et_al_2013"`. `NULL` triggers the default, which is `"Carb2007"`
+#'
 #' @param length_step [numeric] (with default): step length used for the calculation
 #'
 #' @param max_time [numeric] (with default): maximum temporal search range
@@ -72,25 +76,29 @@
 #' @author Sebastian Kreutzer, IRAMAT-CRP2A, UMR 5060, Université Bordeaux Montagine (France); based
 #' on 'MATLAB' code given in file Carb_2007a.m of *Carb*
 #'
-#' @section Function version: 0.1.0
+#' @section Function version: 0.2.0
 #'
 #' @references
 #' Mauz, B., Hoffmann, D., 2014. What to do when carbonate replaced water: Carb, the model for estimating the
-#' dose rate of carbonate-rich samples. Ancient TL 32, 24–32. \url{http://ancienttl.org/ATL_32-2_2014/ATL_32-2_Mauz_p24-32.pdf}
+#' dose rate of carbonate-rich samples. Ancient TL 32, 24-32. \url{http://ancienttl.org/ATL_32-2_2014/ATL_32-2_Mauz_p24-32.pdf}
 #'
 #' Nathan, R.P., Mauz, B., 2008. On the dose-rate estimate of carbonate-rich sediments for trapped charge dating.
-#' Radiation Measurements 43, 14–25. \doi{10.1016/j.radmeas.2007.12.012} \cr
+#' Radiation Measurements 43, 14-25. \doi{10.1016/j.radmeas.2007.12.012} \cr
 #'
 #' **Further reading**
 #'
 #' Nathan, R.P., 2010. Numerical modelling of environmental dose rate and its application to trapped-charge dating.
-#' DPhil thesis, St Hugh’s College, Oxford. \url{https://ora.ox.ac.uk/objects/ora:6421}
+#' DPhil thesis, St Hugh's College, Oxford. \url{https://ora.ox.ac.uk/objects/ora:6421}
+#'
+#' Zimmerman, D.W., 1971. Thermoluminescent dating using fine grains from pottery.
+#' Archaeometry 13, 29–52.\doi{10.1111/j.1475-4754.1971.tb00028.x}
 #'
 #' @keywords dplot manip
 #' @md
 #' @export
 model_DoseRate <- function(
   data,
+  DR_conv_factors = NULL,
   length_step = 1L,
   max_time = 500L,
   n.MC = 100,
@@ -207,6 +215,21 @@ model_DoseRate <- function(
   ref <- Reference_Data
   rm(Reference_Data)
 
+  #select dose rate conversion factors and check allowed values
+  if(!is.null(DR_conv_factors) && !any(DR_conv_factors %in% ref$DR_conv_factors$REFERENCE)){
+    temp_allowed <- paste(ref$DR_conv_factors$REFERENCE, collapse = ", ")
+    stop(paste0(
+        "[model_DoseRate()] '",
+         DR_conv_factors,
+         "' does not correspond to an available dose rate conversion dataset.
+        Allowed are: ",
+        temp_allowed),
+      call. = FALSE)
+  }
+
+  ##set what is set (but not with the same name here)
+  set_DR_conv_factors <- DR_conv_factors
+
   ##minimise potential user problems
   max_time <- max_time[1]
 
@@ -234,6 +257,7 @@ model_DoseRate <- function(
     upper = method_control$upper,
     data = data,
     ref = ref,
+    DR_conv_factors = set_DR_conv_factors,
     length_step = STEP1,
     mode_optim = TRUE
   )
@@ -243,6 +267,7 @@ model_DoseRate <- function(
     x = DATE$par,
     data = data,
     ref = ref,
+    DR_conv_factors = set_DR_conv_factors,
     length_step = STEP1,
     max_time = max_time
   )
@@ -298,11 +323,8 @@ model_DoseRate <- function(
   T <- data[["T"]] + rnorm(n.MC) * data[["T_X"]]
   T[T < 0] <- 0
 
-  # K <- KA * (1 + CC / 100)
-  # U <- UA * (1 + CC / 100)
-  # T <- TA * (1 + CC / 100)
-
-  ##now combine everything in a data.frame, not efficient but we want to stick as close
+  ##now combine everything in a data.frame, not efficient but
+  ##we want to stick as close
   ##as possible with the MATLAB code (the order does not matter)
   data_MC <- cbind(K, T, U,
                    U238 = rep(data[["U238"]],n.MC),
@@ -327,6 +349,7 @@ model_DoseRate <- function(
       upper = method_control$upper,
       data = data_MC[i,],
       ref = ref,
+      DR_conv_factors = set_DR_conv_factors,
       length_step = STEP1,
       mode_optim = TRUE
     ))
@@ -337,6 +360,7 @@ model_DoseRate <- function(
         x = DATE_MC$par,
         data = data_MC[i,],
         ref = ref,
+        DR_conv_factors = set_DR_conv_factors,
         length_step = STEP1,
         max_time = max_time
       )
@@ -421,7 +445,7 @@ if(plot){
   CUMDR_rowMeans <- rowMeans(CUMDR_)
   CUMDR_rowSds <- matrixStats::rowSds(CUMDR_)
 
-  ## =============================================================================================
+  ## +++++++++++++++++
   ##(A) dose rate plot
   plot(
     NA,
@@ -436,6 +460,16 @@ if(plot){
     ylab = "Dose rate [Gy/ka]",
     main = data[["SAMP_NAME"]]
   )
+
+  ##abline
+  abline(v = 0, lty = 2)
+  text(x = 0, mean(DATE[["DR"]]), labels = "(sampling)", srt = 90, cex = .5, pos = 2)
+  axis(
+    side = 3,
+    at = c(data[["ONSET"]], data[["FINISH"]], DATE[["AGE"]]),
+    tick = FALSE,
+    labels = c(expression(t[m[0]]),expression(t[m[1]]), expression(t[0])),
+    padj = 1.2)
 
   ##error polygon
   polygon(
@@ -453,7 +487,7 @@ if(plot){
   ##set mean line (give a good indication whether the n.MC runs had been enough)
   lines(x = 0:max_time, y = rowMeans(DR_), lwd = 1, lty = 2, col = "blue")
 
-  ## =============================================================================================
+  ## +++++++++++++++++
   ##(B) accummulated dose and age
   plot(
     NA,
@@ -550,4 +584,3 @@ if(plot){
   return(results)
 
 }
-

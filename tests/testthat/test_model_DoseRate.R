@@ -15,12 +15,41 @@ test_that("Full function test", {
     model_DoseRate(data = Example_Data[23,], n.MC = 10),regexp = "Modelling failed, please check your input data, they may not be meaningful!")
   expect_type(
     model_DoseRate(data = Example_Data[23:24,], n.MC = 10), type = "list")
+  expect_error(model_DoseRate(data = Example_Data[14,],
+                             DR_conv_factors = "error",
+                             n.MC = 2,
+                             txtProgressBar = FALSE
+  ), regexp = "'error' does not correspond to an available dose rate conversion dataset.\n        Allowed are: Carb2007, Adamiec_Aitken_1998, Guerin_et_al_2011, Liritzis_et_al_2013")
+
 
   ##run simple example
   expect_type(model_DoseRate(data = Example_Data[14,],
     n.MC = 2,
     txtProgressBar = FALSE
   ), type = "list")
+
+  ##run with different conversion factors
+  expect_type(
+    model_DoseRate(
+      data = Example_Data[14, ],
+      DR_conv_factors = "Adamiec_Aitken_1998",
+      n.MC = 2,
+      txtProgressBar = FALSE
+    ),
+    type = "list"
+  )
+
+  ##run extrem case warning
+  temp <- Example_Data[14, ]
+  temp$DE <- 550
+  expect_warning(
+    model_DoseRate(
+      data = temp,
+      n.MC = 2,
+      txtProgressBar = FALSE
+    ),
+    regexp = "Extrem case detected: DE > max cumulative dose rate!"
+  )
 
   ##run two example
   expect_type(model_DoseRate(

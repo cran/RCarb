@@ -5,17 +5,16 @@
 #'
 #'
 #' \if{html}{
-#' \figure{Logo_RCarb.png}{options: width="50px" alt="https://github.com/R-Lum/RCarb"}\cr
+#' \figure{Logo_RCarb.svg}{options: width="50px" alt="https://github.com/R-Lum/RCarb"}\cr
 #' }
 #'
 #'
-#' \tabular{ll}{
-#' **Package:** \tab RCarb\cr
-#' **Type:** \tab Package\cr
-#' **Version:** \tab 0.1.2\cr
-#' **Date:** \tab 2018-12-02\cr
-#' **License:** \tab GPL-3
-#' }
+#' @details
+#'
+#' **Funding**
+#'
+#' Between 2018-2019, the work of Sebastian Kreutzer as maintainer of the package was supported
+#' by LabEx LaScArBxSK (ANR - n. ANR-10-LABX-52).
 #'
 #' @name RCarb-package
 #'
@@ -27,24 +26,25 @@
 #'
 #' @import utils
 #'
+#'
 #' @references
 #'
 #' This package bases on a 'MATLAB' programme with name 'Carb', details can be found the
 #' following references:\cr
 #'
 #' Mauz, B., Hoffmann, D., 2014. What to do when carbonate replaced water: Carb, the model for estimating the
-#' dose rate of carbonate-rich samples. Ancient TL 32, 24–32. \url{http://ancienttl.org/ATL_32-2_2014/ATL_32-2_Mauz_p24-32.pdf}
+#' dose rate of carbonate-rich samples. Ancient TL 32, 24-32. \url{http://ancienttl.org/ATL_32-2_2014/ATL_32-2_Mauz_p24-32.pdf}
 #'
 #' Nathan, R.P., Mauz, B., 2008. On the dose-rate estimate of carbonate-rich sediments for trapped charge dating.
-#' Radiation Measurements 43, 14–25. \doi{10.1016/j.radmeas.2007.12.012}
+#' Radiation Measurements 43, 14-25. \doi{10.1016/j.radmeas.2007.12.012}
 #'
 #' **Further reading**
 #'
 #' Nathan, R.P., 2010. Numerical modelling of environmental dose rate and its application to trapped-charge dating.
-#' DPhil thesis, St Hugh’s College, Oxford. \url{https://ora.ox.ac.uk/objects/ora:6421}
+#' DPhil thesis, St Hugh's College, Oxford. \url{https://ora.ox.ac.uk/objects/ora:6421}
 #'
 #' @importFrom grDevices rgb
-#' @importFrom graphics plot plot.default abline lines par mtext polygon points
+#' @importFrom graphics plot plot.default abline lines par mtext polygon points axis text
 #' @importFrom stats approx nlminb rnorm sd na.exclude density
 #'
 #' @md
@@ -104,12 +104,19 @@ NULL
 #'
 #' @name Reference_Data
 #'
-#' @description Correction factors for beta and gamma radiation used for internal calculations.
+#' @description Reference data and correction factors for beta and gamma radiation used for internal calculations.
 #' These values are used instead of the correction factors given in Aitken (1985) for the carbonate model.
 #'
 #' @details The reference values are used internally to account for: (1) grain size depend beta-attenuation
 #' factors (Mejdahl, 1979) and (2) to correct nuclide dependent beta and gamma radiation for water/carbonate proportions.
 #' The latter values are given as matrix and precise values are interpolated during the modelling process.
+#'
+#' Additionally 'RCarb' provides and own set of dose rate conversion factors to convert concentrations
+#' of U, Th, and K to dose rate values. Historically *Carb* (and thus 'RCarb') as its own dose rate
+#' conversion factors, which differ slightly from other published values. To provide a consistent
+#' calculation approach by default the 'old' *Carb* values are used, but the user can further
+#' switch (see [model_DoseRate]) to values provided by Adamiec \& Aitken (1998), Guérin et al. (2011)
+#' or Liritzis et al (2013).
 #'
 #' Different values quoted for U-238 and U-234 accounts for different activity ratios. For further details
 #' on the origin of these data we refer to Nathan \& Mauz (2008) and Nathan (2010).\cr
@@ -145,14 +152,26 @@ NULL
 #' DATApu \tab	 `matrix` \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for U\cr
 #' DATApu234 \tab	 `matrix` \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for U-234\cr
 #' DATApu238 \tab	 `matrix` \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for U-238\cr
-#' mejdahl \tab	 `data.frame` \tab 36 x 4 \tab beta-dose attenuation values for quartz grains according to Mejdahl (1979)
+#' mejdahl \tab	 `data.frame` \tab 36 x 4 \tab beta-dose attenuation values for quartz grains according to Mejdahl (1979) \cr
+#' DR_conv_factors \tab `data.frame` \tab 4 x 13 \tab beta and gamma dose rate conversion factors used internally (see details)
 #' }
 #'
-#' @section Version: 0.1.0
+#' @section Version: 0.2.0
 #'
 #' @keywords datasets
 #'
 #' @references
+#'
+#' Adamiec, G., Aitken, M.J., 1998. Dose-rate conversion factors: update.
+#' Ancient TL 16, 37–50. \url{http://ancienttl.org/ATL_16-2_1998/ATL_16-2_Adamiec_p37-50.pdf}
+#'
+#' Guérin, G., Mercier, N., Adamiec, G., 2011. Dose-rate conversion factors: update. Ancient TL 29, 5–9.
+#' \url{http://ancienttl.org/ATL_29-1_2011/ATL_29-1_Guerin_p5-8.pdf}
+#'
+#' Liritzis, I., Stamoulis, K., Papachristodoulou, C., Ioannides, K., 2013.
+#' A Re-Evaluation of Radiation Dose-Rate Conversion Factors.
+#' Mediterranean Arhaeology and Archaeometry 12, 1–15.
+#' \url{http://maajournal.com/Issues/2012/pdf/FullTextLiritzis.pdf}
 #'
 #' Mejdahl, V., 1979. Thermoluminescence dating: beta-dose attenuation in quartz grains. Archaeometry 21, 61-72.
 #' \url{http://ancienttl.org/ATL_32-2_2014/ATL_32-2_Mauz_p24-32.pdf}
@@ -161,7 +180,7 @@ NULL
 #' Radiation Measurements 43, 14-25. \doi{10.1016/j.radmeas.2007.12.012}
 #'
 #' Nathan, R.P., 2010. Numerical modelling of environmental dose rate and its application to trapped-charge dating.
-#' DPhil thesis, St Hugh’s College, Oxford. \url{https://ora.ox.ac.uk/objects/ora:6421}\cr
+#' DPhil thesis, St Hugh's College, Oxford. \url{https://ora.ox.ac.uk/objects/ora:6421}\cr
 #'
 #' **Further reading**
 #'
