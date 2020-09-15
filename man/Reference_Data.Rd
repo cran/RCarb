@@ -4,25 +4,27 @@
 \name{Reference_Data}
 \alias{Reference_Data}
 \title{Reference data}
-\format{\code{Reference_Data}: \link{list} \cr
+\format{
+\code{Reference_Data}: \link{list} \cr
 
 \tabular{llll}{
 \strong{NAME} \tab \strong{TYPE} \tab \strong{DIM} \tab \strong{DESCRIPTION}\cr
-DATAek \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for K\cr
-DATAet \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for Th \cr
-DATAet230 	\tab \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for Th-230\cr
-DATAeu 	\tab \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for U\cr
-DATAeu234 	\tab \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for U-234\cr
-DATAeu238 	\tab \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for U-238\cr
-DATApk \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for K\cr
-DATApt \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for T\cr
-DATApt230 \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for Th-230\cr
-DATApu \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for U\cr
-DATApu234 \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for U-234\cr
-DATApu238 \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for U-238\cr
-mejdahl \tab	 \code{data.frame} \tab 36 x 4 \tab beta-dose attenuation values for quartz grains according to Mejdahl (1979) \cr
-DR_conv_factors \tab \code{data.frame} \tab 4 x 13 \tab beta and gamma dose rate conversion factors used internally (see details)
-}}
+\code{DATAek} \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for K\cr
+\code{DATAet} \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for Th \cr
+\code{DATAet230} 	\tab \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for Th-230\cr
+\code{DATAeu} 	\tab \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for U\cr
+\code{DATAeu234} 	\tab \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for U-234\cr
+\code{DATAeu238} 	\tab \code{matrix} \tab 4 x 4 \tab correction factors for electrons for water and carbonate to sediment mass ratio for U-238\cr
+\code{DATApk} \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for K\cr
+\code{DATApt} \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for T\cr
+\code{DATApt230} \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for Th-230\cr
+\code{DATApu} \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for U\cr
+\code{DATApu234} \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for U-234\cr
+\code{DATApu238} \tab	 \code{matrix} \tab 4 x 4 \tab correction factors for photons for water and carbonate to sediment mass ratio for U-238\cr
+\code{mejdahl} \tab	 \code{data.frame} \tab 36 x 4 \tab beta-dose attenuation values for quartz grains according to Mejdahl (1979) \cr
+\code{DR_conv_factors} \tab \code{data.frame} \tab 4 x 13 \tab beta and gamma dose rate conversion factors used internally (see details)
+}
+}
 \description{
 Reference data and correction factors for beta and gamma radiation used for internal calculations.
 These values are used instead of the correction factors given in Aitken (1985) for the carbonate model.
@@ -36,23 +38,23 @@ Additionally 'RCarb' provides and own set of dose rate conversion factors to con
 of U, Th, and K to dose rate values. Historically \emph{Carb} (and thus 'RCarb') as its own dose rate
 conversion factors, which differ slightly from other published values. To provide a consistent
 calculation approach by default the 'old' \emph{Carb} values are used, but the user can further
-switch (see \link{model_DoseRate}) to values provided by Adamiec & Aitken (1998), Guérin et al. (2011)
+switch (see \link{model_DoseRate}) to values provided by Adamiec \& Aitken (1998), Guérin et al. (2011)
 or Liritzis et al (2013).
 
 Different values quoted for U-238 and U-234 accounts for different activity ratios. For further details
-on the origin of these data we refer to Nathan & Mauz (2008) and Nathan (2010).\cr
+on the origin of these data we refer to Nathan \& Mauz (2008) and Nathan (2010).\cr
 
-\strong{Nuclear data origin according to Nathan & Mauz (2008)}
+\strong{Nuclear data origin according to Nathan \& Mauz (2008)}
 
 The gamma primary energy spectra of uranium, thorium and potassium are drawn from
 Evaluated Nuclear Structure Data File (ENSDF) database at \url{http://www.nndc.bnl.gov} (2002-01-16)
 and the beta primary energy spectra was derived from ENSDF end-point energies using a
-Fermi beta decay model (Evans, 1955) modified by Behrens & Szybisz (1976).
+Fermi beta decay model (Evans, 1955) modified by Behrens \& Szybisz (1976).
 For the simulations of the collisional mass stopping powers for quartz the software ESTAR
 (Berger et al., 2000) was used. The mass energy-absorption coefficients for quartz were
-tabulated by Hubbell & Seltzer (2004).
+tabulated by Hubbell \& Seltzer (2004).
 
-\emph{For further details and references please read Nathan & Mauz (2008)}
+\emph{For further details and references please read Nathan \& Mauz (2008)}
 }
 \section{Version}{
  0.2.0
@@ -74,7 +76,7 @@ Guérin, G., Mercier, N., Adamiec, G., 2011. Dose-rate conversion factors: updat
 
 Liritzis, I., Stamoulis, K., Papachristodoulou, C., Ioannides, K., 2013.
 A Re-Evaluation of Radiation Dose-Rate Conversion Factors.
-Mediterranean Arhaeology and Archaeometry 12, 1–15.
+Mediterranean Archaeology and Archaeometry 12, 1–15.
 \url{http://maajournal.com/Issues/2012/pdf/FullTextLiritzis.pdf}
 
 Mejdahl, V., 1979. Thermoluminescence dating: beta-dose attenuation in quartz grains. Archaeometry 21, 61-72.

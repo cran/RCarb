@@ -3,16 +3,16 @@
 #' @description This function models the dose rate evolution in carbonate enrich environments. For the
 #' calculation internal functions are called.
 #'
-#' @details This function is the starting point for the dose rate modelling for carbonat enrich
-#' environments. It provides basically the same functionality as the original version of 'Carb', i.e.
+#' @details This function is the starting point for the dose rate modelling for carbonate enrich
+#' environments. It provides basically the same functionality as the original version of `'Carb'`, i.e.
 #' you should be also aware of the limitations of this modelling approach. In particular: The model
 #' assumes a linear carbonate mass increase due to post-depositional processes. Please read the
 #' references cited blow.\cr
 #'
 #' **Uncertainty estimation**
 #'
-#' For estimating the uncertainties, Monte-Carloe (MC) simulation runs are used. For very
-#' small values (close to 0) this can, however, lead to edge effects (similar in 'Carb') since
+#' For estimating the uncertainties, Monte-Carlo (MC) simulation runs are used. For very
+#' small values (close to 0) this can, however, lead to edge effects (similar in `'Carb'`) since
 #' values below 0 are set to 0.
 #'
 #' @param data [data.frame] (**required**): input data following the structure given
@@ -38,7 +38,10 @@
 #'
 #' @param plot [logical] (with default): enables/disables plot output
 #'
-#' @param ... further arguments passed to the underyling plot functions, see also details for further information. Supported standard arguments are `mfrow`, `xlim`, `xlab`.
+#' @param par_local [logical] (with default): enables/disable local par settings, If set
+#' to `FALSE` all global par settings are accepted.
+#'
+#' @param ... further arguments passed to the underlying plot functions, see also details for further information. Supported standard arguments are `mfrow`, `xlim`, `xlab`.
 #'
 #' @return The function returns numerical and graphical output
 #'
@@ -57,7 +60,7 @@
 #' black line, the more reliable are the given error margins. \cr
 #'
 #' **Lower plot:** Totally absorbed dose over time. The plot is an representation of the 'new'
-#' age based on the carbonat modelling.
+#' age based on the carbonate modelling.
 #'
 #'
 #' @examples
@@ -73,10 +76,10 @@
 #' )
 #'
 #'
-#' @author Sebastian Kreutzer, IRAMAT-CRP2A, UMR 5060, Université Bordeaux Montagine (France); based
+#' @author Sebastian Kreutzer, Geography & Earth Sciences, Aberystwyth University (United Kingdom); based
 #' on 'MATLAB' code given in file Carb_2007a.m of *Carb*
 #'
-#' @section Function version: 0.2.0
+#' @section Function version: 0.2.1
 #'
 #' @references
 #' Mauz, B., Hoffmann, D., 2014. What to do when carbonate replaced water: Carb, the model for estimating the
@@ -106,6 +109,7 @@ model_DoseRate <- function(
   txtProgressBar = TRUE,
   verbose = TRUE,
   plot = TRUE,
+  par_local = TRUE,
   ...
 ){
 
@@ -127,6 +131,7 @@ model_DoseRate <- function(
     ##remove first (the function name) and 'data'
     args[[1]] <- NULL
     args$data <- NULL
+
 
     ##run function
     results_list <- lapply(data_list, function(x){
@@ -401,7 +406,7 @@ model_DoseRate <- function(
 # Terminal output -----------------------------------------------------------------------------
 if(verbose){
   cat("\n[model_DoseRate()]\n\n")
-  cat(" Sample ID:\t\t", data[["SAMP_NAME"]], "\n")
+  cat(" Sample ID:\t\t", as.character(data[["SAMP_NAME"]]), "\n")
   cat(" Equivalent dose:\t", round(data[["DE"]],2), " \u00b1 ", round(data[["DE_X"]],2), "Gy\n")
   cat(" Diameter:\t\t", data[["DIAM"]], "\u00b5m \n")
   cat(" MC runs error estim.:\t", n.MC," \n")
@@ -435,9 +440,11 @@ if(plot){
   val = list(...))
 
   ##par settings; including restoring them
-  par.default <- list(mfrow = par()$mfrow)
-  on.exit(do.call(par, args = par.default))
-  par(mfrow = plot_settings$mfrow)
+  if(par_local){
+    par.default <- list(mfrow = par()$mfrow)
+    on.exit(do.call(par, args = par.default))
+    par(mfrow = plot_settings$mfrow)
+  }
 
   ##calculate some variables needed later
   DR_rowMeans <- rowMeans(DR_)

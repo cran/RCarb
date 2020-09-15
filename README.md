@@ -7,21 +7,23 @@
 
 # RCarb <img width=120px src="man/figures/Logo_RCarb.svg" align="right" />
 
-[![CRAN](http://www.r-pkg.org/badges/version/RCarb)](https://CRAN.R-project.org/package=RCarb)
-[![Downloads](http://cranlogs.r-pkg.org/badges/grand-total/RCarb)](https://www.r-pkg.org/pkg/RCarb)
+[![CRAN](https://www.r-pkg.org/badges/version/RCarb)](https://CRAN.R-project.org/package=RCarb)
+[![cran
+checks](https://cranchecks.info/badges/worst/RCarb)](https://cranchecks.info/pkgs/RCarb)
+[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/RCarb)](https://www.r-pkg.org/pkg/RCarb)
 [![Build
 Status](https://travis-ci.org/R-Lum/RCarb.svg?branch=master)](https://travis-ci.org/R-Lum/RCarb)
 [![Build
 status](https://ci.appveyor.com/api/projects/status/bjfy5lkqblrgvo15?svg=true)](https://ci.appveyor.com/project/RLumSK/rcarb)
 [![codecov](https://codecov.io/gh/R-Lum/RCarb/branch/master/graph/badge.svg)](https://codecov.io/gh/R-Lum/RCarb)
 
-The **R** package ‘RCarb’ provides a collection of various R functions
+The **R** package `'RCarb'` provides a collection of various R functions
 to model dose rates in carbonate-rich samples. The package is a
-translation of the ‘MATLAB’ program *Carb* by Roger P. Nathan.
+translation of the `'MATLAB'` program *Carb* by Roger P. Nathan.
 
 ## Installation of the developer version
 
-To install the latest development builds of ‘RCarb’ directly from
+To install the latest development builds of `'RCarb'` directly from
 GitHub, run
 
 ``` r
@@ -30,8 +32,8 @@ if(!require("devtools"))
 devtools::install_github("R-Lum/RCarb@master")
 ```
 
-To install a developer build other than ‘master’, replace the term
-‘master’ in the codeline by the name of the wanted developer build
+To install a developer build other than `'master'`, replace the term
+`'master'` in the code line by the name of the wanted developer build
 (not available yet).
 
 Please further note that our ‘GitHub’ versions are developer versions
@@ -56,9 +58,15 @@ details.
 
   - [Luminescence](https://github.com/R-Lum/Luminescence)
   - [RLumModel](https://github.com/R-Lum/RLumModel)
+  - [RLumCarlo](https://github.com/R-Lum/RLumCarlo)
   - [RLumShiny](https://github.com/R-Lum/RLumShiny)
 
 ## References
+
+Kreutzer, S., Mauz, B., Martin, L., Mercier, N., 2019. ‘RCarb’: Dose
+Rate Modelling of Carbonate-Rich Samples - an Implementation of Carb in
+R -. Ancient TL 37, 1–8.
+<http://ancienttl.org/ATL_37-2_2019/ATL_37-2_Kreutzer_p1-8.pdf>
 
 Nathan, R.P., Mauz, B., 2008. On the dose-rate estimate of
 carbonate-rich sediments for trapped charge dating. Radiation
@@ -78,5 +86,10 @@ College, Oxford. <https://ora.ox.ac.uk/objects/ora:6421>
 
 ## <span class="glyphicon glyphicon-euro"></span> Funding
 
-Between 2018-2019, the work of Sebastian Kreutzer as maintainer of the
-package was supported by LabEx LaScArBxSK (ANR - n. ANR-10-LABX-52).
+  - Between 2018-2019, the work of Sebastian Kreutzer as maintainer of
+    the package was supported by LabEx LaScArBxSK (ANR -
+    n. ANR-10-LABX-52).
+
+  - From 2020, Sebastian Kreutzer received funding from the European
+    Union’s Horizon 2020 research and innovation programme under the
+    Marie Skłodowska-Curie grant agreement No 844457 (project: CREDit).
