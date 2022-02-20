@@ -10,12 +10,10 @@
 [![CRAN](https://www.r-pkg.org/badges/version/RCarb)](https://CRAN.R-project.org/package=RCarb)
 [![cran
 checks](https://cranchecks.info/badges/worst/RCarb)](https://cranchecks.info/pkgs/RCarb)
+[![DOI](https://zenodo.org/badge/151577249.svg)](https://zenodo.org/badge/latestdoi/151577249)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/RCarb)](https://www.r-pkg.org/pkg/RCarb)
-[![Build
-Status](https://travis-ci.org/R-Lum/RCarb.svg?branch=master)](https://travis-ci.org/R-Lum/RCarb)
-[![Build
-status](https://ci.appveyor.com/api/projects/status/bjfy5lkqblrgvo15?svg=true)](https://ci.appveyor.com/project/RLumSK/rcarb)
-[![codecov](https://codecov.io/gh/R-Lum/RCarb/branch/master/graph/badge.svg)](https://codecov.io/gh/R-Lum/RCarb)
+[![R-CMD-check](https://github.com/R-Lum/RCarb/workflows/GitHub%20Actions%20CI/badge.svg)](https://github.com/R-Lum/RCarb/actions)
+[![codecov](https://app.codecov.io/gh/R-Lum/RCarb/branch/master/graph/badge.svg)](https://app.codecov.io/gh/R-Lum/RCarb)
 
 The **R** package `'RCarb'` provides a collection of various R functions
 to model dose rates in carbonate-rich samples. The package is a
@@ -56,10 +54,10 @@ details.
 
 ## Related projects
 
-  - [Luminescence](https://github.com/R-Lum/Luminescence)
-  - [RLumModel](https://github.com/R-Lum/RLumModel)
-  - [RLumCarlo](https://github.com/R-Lum/RLumCarlo)
-  - [RLumShiny](https://github.com/R-Lum/RLumShiny)
+-   [Luminescence](https://github.com/R-Lum/Luminescence)
+-   [RLumModel](https://github.com/R-Lum/RLumModel)
+-   [RLumCarlo](https://github.com/R-Lum/RLumCarlo)
+-   [RLumShiny](https://github.com/R-Lum/RLumShiny)
 
 ## References
 
@@ -86,10 +84,11 @@ College, Oxford. <https://ora.ox.ac.uk/objects/ora:6421>
 
 ## <span class="glyphicon glyphicon-euro"></span> Funding
 
-  - Between 2018-2019, the work of Sebastian Kreutzer as maintainer of
+-   Between 2018-2019, the work of Sebastian Kreutzer as maintainer of
     the package was supported by LabEx LaScArBxSK (ANR -
     n. ANR-10-LABX-52).
 
-  - From 2020, Sebastian Kreutzer received funding from the European
-    Union’s Horizon 2020 research and innovation programme under the
-    Marie Skłodowska-Curie grant agreement No 844457 (project: CREDit).
+-   Between 2020-2022, Sebastian Kreutzer received funding from the
+    European Union’s Horizon 2020 research and innovation programme
+    under the Marie Skłodowska-Curie grant agreement No 844457 (project:
+    CREDit).
