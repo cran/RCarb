@@ -21,7 +21,7 @@
 #' @param mode_optim [logical] (with default): switch output mode, if `TRUE` only a scalar is returned,
 #' this reduces the used memory consumption for the calculation
 #'
-#' @author Sebastian Kreutzer, Geography & Earth Sciences, Aberystwyth University (United Kingdom) based
+#' @author Sebastian Kreutzer, Institute of Geography, Heidelberg University (Germany) based
 #' on the MATLAB code in the file `'datalu1.m'` from `Carb_2007a`
 #'
 #' @section Function version: 0.2.0
@@ -287,7 +287,7 @@
   ##sometimes the input values are not meaningful (for example data row 23 in the example dataset)
   ##and the approximation failed,
   ##we here provide a clean crash
-  if(class(AGE) == 'try-error' || class(AGEA) == 'try-error')
+  if(inherits(AGE, 'try-error') || inherits(AGEA, 'try-error'))
     stop("[.calc_DoseRate()] Modelling failed, please check your input data, they may not be meaningful!",
          call. = FALSE)
 
