@@ -4,14 +4,13 @@
 \name{RCarb-package}
 \alias{RCarb-package}
 \alias{RCarb}
-\title{RCarb - Dose Rate Modelling of Carbonate-Rich Samples}
+\title{RCarb - Dose Rate Modelling of Carbonate-Rich Samples
+\if{html}{
+\figure{Logo_RCarb.svg}{options: width="50" alt="https://r-lum.github.io/RCarb"}\cr
+}}
 \description{
 The package provides a dose rate modelling for carbonate-rich samples in the
 context of trapped charged dating (e.g., luminescence dating) applications.
-
-\if{html}{
-\figure{Logo_RCarb.svg}{options: width="50" alt="https://github.com/R-Lum/RCarb"}\cr
-}
 }
 \details{
 \strong{Funding}
@@ -21,18 +20,20 @@ by LabEx LaScArBxSK (ANR - n. ANR-10-LABX-52).
 \item From 01/2020-04/2022, Sebastian Kreutzer received funding from the European Union’s Horizon 2020
 research and innovation programme under the Marie Skłodowska-Curie grant agreement
 No 844457 (project: CREDit).
+\item since 03/2023: Sebastian Kreutzer as maintainer of the package receives
+funding from the DFG Heisenberg programme No 505822867.
 }
 }
 \references{
 Kreutzer, S., Mauz, B., Martin, L., Mercier, N., 2019. “RCarb”:
 Dose Rate Modelling of Carbonate-Rich Samples - an Implementation of Carb in R -.
-Ancient TL 37, 1–8.
+Ancient TL 37, 1–8. \doi{10.26034/la.atl.2019.533}
 
 This package bases on a 'MATLAB' programme with name 'Carb', details can be found the
 following references:\cr
 
 Mauz, B., Hoffmann, D., 2014. What to do when carbonate replaced water: Carb, the model for estimating the
-dose rate of carbonate-rich samples. Ancient TL 32, 24-32. \url{http://ancienttl.org/ATL_32-2_2014/ATL_32-2_Mauz_p24-32.pdf}
+dose rate of carbonate-rich samples. Ancient TL 32, 24-32. \doi{10.26034/la.atl.2014.481}
 
 Nathan, R.P., Mauz, B., 2008. On the dose-rate estimate of carbonate-rich sediments for trapped charge dating.
 Radiation Measurements 43, 14-25. \doi{10.1016/j.radmeas.2007.12.012}
@@ -41,5 +42,23 @@ Radiation Measurements 43, 14-25. \doi{10.1016/j.radmeas.2007.12.012}
 
 Nathan, R.P., 2010. Numerical modelling of environmental dose rate and its application to trapped-charge dating.
 DPhil thesis, St Hugh's College, Oxford. \url{https://ora.ox.ac.uk/objects/ora:6421}
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://r-lum.github.io/RCarb/}
+  \item Report bugs at \url{https://github.com/R-Lum/RCarb/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Sebastian Kreutzer \email{sebastian.kreutzer@uni-heidelberg.de} (\href{https://orcid.org/0000-0002-0734-2199}{ORCID}) [translator, data contributor]
+
+Authors:
+\itemize{
+  \item Roger P. Nathan [copyright holder]
+  \item Barbara Mauz (\href{https://orcid.org/0000-0003-1504-333X}{ORCID}) [copyright holder]
+}
+
 }
 \keyword{package}
