@@ -6,6 +6,9 @@
 #' @param file [character] (optional): output path, if `NULL` nothing is written, but a template
 #' [data.frame] is returned.
 #'
+#'
+#' @param nrows [integer] (optionl): set the number of rows in the template, the default `NULL` is one.
+#'
 #' @param ... additional arguments that can be passed to function [write.table] if `file != NULL`.
 #' Supported arguments are: `sep`, `dec`, `fileEncoding`
 #'
@@ -34,6 +37,7 @@
 #' @export
 write_InputTemplate <- function(
   file = NULL,
+  nrows = NULL,
   ...
 ){
 
@@ -45,8 +49,17 @@ write_InputTemplate <- function(
   ##remove all rows, except the first
   df <- df[1,]
 
+  ## RLumShiny
+  ## add option for shiny app
+  if(!is.null(list(...)$.set_rows_NA))
+    df[,1:ncol(df)] <- NA_complex_
+
   ##replace name
   df$SAMP_NAME[1] <- "EXAMPLE"
+
+  ##duplicate
+  if(!is.null(nrows) && is.numeric(nrows))
+    df <- rbind(df, df[rep(1, floor(abs(nrows[1])) - 1), ])
 
   ##restore attributes
   df_list <- lapply(1:ncol(df), function(x){

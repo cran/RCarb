@@ -21,7 +21,8 @@
 #'
 #' @param DR_conv_factors [character] (*optional*): applied dose rate conversion factors,
 #' allowed input values are `"Carb2007"`, `"Adamiec_Aitken_1998"`, `"Guerin_et_al_2011"`,
-#' `"Liritzis_et_al_2013"`. `NULL` triggers the default, which is `"Carb2007"`
+#' `"Liritzis_et_al_2013"`, `Cresswell_et_al_2018`,
+#' `NULL` triggers the default, which is `"Carb2007"`
 #'
 #' @param length_step [numeric] (with default): step length used for the calculation
 #'
@@ -32,7 +33,7 @@
 #' @param method_control (*optional*): additional arguments that can be provided to the control the
 #' the modelling. See details for further information.
 #'
-#' @param txtProgressBar [logical] (with default): enables/disables the `txtProgressBar` for the MC runs
+#' @param multicore [logical] [numeric] (with default): enables/disables multicore processing for MC runs
 #'
 #' @param verbose [logical] (with default): enables/disables verbose mode
 #'
@@ -62,7 +63,6 @@
 #' **Lower plot:** Totally absorbed dose over time. The plot is an representation of the 'new'
 #' age based on the carbonate modelling.
 #'
-#'
 #' @examples
 #' ##load example data
 #' data("Example_Data", envir = environment())
@@ -72,14 +72,13 @@
 #' model_DoseRate(
 #' data = Example_Data[14,],
 #' n.MC = 2,
-#' txtProgressBar = FALSE
-#' )
+#' multicores = 2)
 #'
 #'
 #' @author Sebastian Kreutzer, Institute of Geography, Heidelberg University (Germany); based
 #' on 'MATLAB' code given in file Carb_2007a.m of *Carb*
 #'
-#' @section Function version: 0.2.1
+#' @section Function version: 0.3.0
 #'
 #' @references
 #' Mauz, B., Hoffmann, D., 2014. What to do when carbonate replaced water: Carb, the model for estimating the
@@ -106,16 +105,33 @@ model_DoseRate <- function(
   max_time = 500L,
   n.MC = 100,
   method_control = list(),
-  txtProgressBar = TRUE,
+  multicore = FALSE,
   verbose = TRUE,
   plot = TRUE,
   par_local = TRUE,
   ...
 ){
 
+  ## RLumShiny
+  ## return empty table if input is NULL, this helps in the shiny app,
+  ## but we don't report it here.
+  if(is.null(data))
+    return(cbind(
+    write_InputTemplate(.set_rows_NA = TRUE),
+    data.frame(
+    AGE_CONV = NA,
+    AGE_CONV_X = NA,
+    AGE = NA,
+    AGE_X = NA,
+    DR_CONV = NA,
+    DR_CONV_X = NA,
+    DR_ONSET = NA,
+    DR_ONSET_X = NA,
+    DR_FINAL = NA,
+    DR_FINAL_X = NA,
+    n.MC = NA)))
 
 # Self-call -----------------------------------------------------------------------------------
-
   ##we keep it as simple as possible, only a data.frame is allowed, all subsequent tests
   ##are handed over to the code below
   if(inherits(data, "data.frame") &&
@@ -132,20 +148,21 @@ model_DoseRate <- function(
     args[[1]] <- NULL
     args$data <- NULL
 
-
     ##run function
     results_list <- lapply(data_list, function(x){
-      temp <- try(do.call(model_DoseRate, c(list(data = x),args)))
+      temp <- tryCatch(
+         do.call(model_DoseRate, c(list(data = x),args)),
+         error = function(cond) {
+           message(
+             "[model_DoseRate()] Calculation for sample ", x[[1]], " failed: \n -> ",
+             conditionMessage(cond),
+             "\n -> NULL returned!")
+           return(NULL)  # or whatever default value you want
+         }
+       )
 
-      if(inherits(temp, "try-error")){
-        try(stop(paste0("[model_DoseRate()] Calculation for sample ", x[[1]], " failed. NULL returned!"),
-                 call. = FALSE))
-        return(NULL)
+      return(temp)
 
-      }else{
-        return(temp)
-
-      }
     })
 
     ##remove NULL elements from failed attempts
@@ -160,7 +177,6 @@ model_DoseRate <- function(
   }
 
 # Integrity tests -----------------------------------------------------------------------------
-
   ##NOTE: The integrity tests are done mainly here and not in the function '.calc_DoseRate' to
   ##avoid additional overhead
 
@@ -211,9 +227,7 @@ model_DoseRate <- function(
   ERROR <- n.MC[1]
   STEP1 <- length_step[1]
 
-
 # Prepare data --------------------------------------------------------------------------------
-
   ##load reference data here; we do not provide the option to the user to add it here
   Reference_Data <- NULL
   data("Reference_Data", envir = environment())
@@ -249,11 +263,10 @@ model_DoseRate <- function(
   method_control <- modifyList(x = method_control_default, val = method_control)
 
 # Run optimisation ----------------------------------------------------------------------------
-
   ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   ##AGE
   ##find minimum
-  DATE <- nlminb(
+  DATE <- suppressWarnings(stats::nlminb(
     start = STEP1,
     objective = .calc_DoseRate,
     control = list(
@@ -265,7 +278,7 @@ model_DoseRate <- function(
     DR_conv_factors = set_DR_conv_factors,
     length_step = STEP1,
     mode_optim = TRUE
-  )
+  ))
 
   ##calculate values with minimum value
   DATE <- .calc_DoseRate(
@@ -338,21 +351,19 @@ model_DoseRate <- function(
                    )
   rm(K,T,U,WCI,WCF, CC, DIAM, COSMIC, INTERNAL, ONSET, FINISH, DE)
 
-  ##set txtprogressbar
-  if(verbose && txtProgressBar)
-    pb <- txtProgressBar(min = 1, max = n.MC, style = 3)
+  # split to avoid subsetting (suggested by Qwen3 30B)
+  data_list <- asplit(data_MC, 1)
 
-
-  ##start loop
-  for(i in 1:n.MC){
-    DATE_MC <- suppressWarnings(nlminb(
+  ## define function for MC loops
+  .nMC_cal <- function(data_row_MC) {
+    fit_MC <- suppressWarnings(stats::nlminb(
       start = STEP1,
       objective = .calc_DoseRate,
       control = list(
         trace = FALSE),
       lower = method_control$lower,
       upper = method_control$upper,
-      data = data_MC[i,],
+      data = data_row_MC,
       ref = ref,
       DR_conv_factors = set_DR_conv_factors,
       length_step = STEP1,
@@ -362,33 +373,63 @@ model_DoseRate <- function(
     ##calculate values with minium value
     DATE_MC <-
       .calc_DoseRate(
-        x = DATE_MC$par,
-        data = data_MC[i,],
+        x = fit_MC$par,
+        data = data_row_MC,
         ref = ref,
         DR_conv_factors = set_DR_conv_factors,
         length_step = STEP1,
         max_time = max_time
       )
 
+    ##return
+    list(
+      DE = data_row_MC[["DE"]],
+      DR = DATE_MC$DR,
+      DRA = DATE_MC$DRA,
+      CUMDR = DATE_MC$CUMDR,
+      AGE = DATE_MC$AGE,
+      AGEA = DATE_MC$AGEA)
+   }
 
-    ##fill variables
-    DE_[i] <- data_MC[i,"DE"]
-    DR_[,i] <- DATE_MC$DR
-    DRA_[,i] <- DATE_MC$DRA
-    CUMDR_[,i] <- DATE_MC$CUMDR
-    AGE_[i] <- DATE_MC$AGE
-    AGEA_[i] <- DATE_MC$AGEA
+  # Apply optimization in parallel (if desired)
+  if (requireNamespace("parallel", quietly = TRUE) &&
+      (multicore[1] == TRUE || inherits(multicore[1], "numeric"))) {
+    n_cl <- if(!inherits(multicore, "logical")) {
+      min(parallel::detectCores() - 1, floor(multicore))
 
-    ##update progressbar
-    if(verbose && txtProgressBar) setTxtProgressBar(pb,i)
+    } else {
+      min(parallel::detectCores() - 1, n.MC)
+
+    }
+
+    ## initialise cluste
+    cl <- parallel::makeCluster(n_cl)
+    on.exit(parallel::stopCluster(cl), add = TRUE)
+
+    if(verbose)
+      message("[model_DoseRate()] Running MC calculation with ", n_cl, " core(s) ...")
+
+    ## run in loop
+    results <- parallel::parLapply(cl, data_list, .nMC_cal)
+
+  } else {
+    results <- lapply(data_list, .nMC_cal)
+
   }
 
-  ##close pb
-  if(verbose && txtProgressBar) close(pb)
-
+  ## extract results
+  for (i in seq_along(results)) {
+   ##fill variables
+   DE_[i] <- results[[i]]$DE
+   DR_[,i] <- results[[i]]$DR
+   DRA_[,i] <- results[[i]]$DRA
+   CUMDR_[,i] <- results[[i]]$CUMDR
+   AGE_[i] <- results[[i]]$AGE
+   AGEA_[i] <- results[[i]]$AGEA
+  }
 
 # Extract final values ------------------------------------------------------------------------
-  ##extract all values we want to return in the terimal and in the results data.frame
+  ##extract all values we want to return in the terminal and in the results data.frame
   data_results <- round(data.frame(
     AGE_CONV = DATE$AGEA,
     AGE_CONV_X = sd(AGEA_),
@@ -401,7 +442,7 @@ model_DoseRate <- function(
     DR_FINAL = rowMeans(DR_)[1],
     DR_FINAL_X = sd(DR_[1,1:n.MC]),
     n.MC = as.integer(n.MC[1])
-  ),3)
+  ), 3)
 
 # Terminal output -----------------------------------------------------------------------------
 if(verbose){
@@ -429,7 +470,6 @@ if(verbose){
 
 # Plotting ------------------------------------------------------------------------------------
 if(plot){
-
   ##set plot settings
   plot_settings <- modifyList(x = list(
     mfrow = c(2,1),
@@ -529,7 +569,6 @@ if(plot){
   density_De_x[density_De_x <= par()$usr[1]] <-  par()$usr[1] - 0.2
   lines(x = density_De_x, density_De_y, col = "red")
 
-
   ##centre lines horizontal (De)
   lines(
     x = c(0, DATE[["AGE"]]),
@@ -571,11 +610,9 @@ if(plot){
   ##add mtext
   mtext(side = 3, text = paste0("Age: ", round(DATE$AGE,2), " \u00b1 ", round(sd(AGE_),2), " ka"))
 
-
 }#end plot
 
 # Return value --------------------------------------------------------------------------------
-
   ##the return value is the input data.frame + added lines
   results <- cbind(
     data,
@@ -585,7 +622,6 @@ if(plot){
 
   ##add attributes to data.frame
   attr(results, which = "package") <- "RCarb"
-
 
   ##return
   return(results)
